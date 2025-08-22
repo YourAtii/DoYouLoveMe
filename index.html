@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Do You Love Me?</title>
+
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(to right, #ffc1cc, #ffe6eb);
+      height: 100vh;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .container {
+      text-align: center;
+      position: absolute;
+      width: 400px;
+      padding: 30px;
+      background: #fff0f5;
+      border-radius: 20px;
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 10;
+    }
+
+    h1 {
+      font-family: 'Pacifico', cursive;
+      font-size: 2.8em;
+      color: #e91e63;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+    }
+
+    .buttons {
+      margin-top: 20px;
+      position: relative;
+    }
+
+    button {
+      padding: 12px 24px;
+      font-size: 16px;
+      font-weight: 600;
+      font-family: 'Poppins', sans-serif;
+      border: none;
+      border-radius: 30px;
+      cursor: pointer;
+      transition: 0.3s ease;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    }
+
+    #yesBtn {
+      background-color: #ff4081;
+      color: white;
+      margin-right: 20px;
+    }
+
+    #yesBtn:hover {
+      transform: scale(1.1);
+    }
+
+    #noBtn {
+      background-color: #e57373;
+      color: white;
+      position: absolute;
+    }
+
+    .hearts {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      pointer-events: none;
+      overflow: hidden;
+      z-index: 5;
+    }
+
+    .heart {
+      color: #e91e63;
+      font-size: 40px;
+      position: absolute;
+      opacity: 0;
+      animation: float 2.5s ease-out forwards;
+    }
+
+    @keyframes float {
+      0% {
+        opacity: 1;
+        transform: translate(0, 0) scale(1);
+      }
+      100% {
+        opacity: 0;
+        transform: translate(var(--x), var(--y)) scale(1.8);
+      }
+    }
+
+    .popup {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) scale(0);
+      background-color: #fff;
+      padding: 30px 40px;
+      border-radius: 20px;
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+      font-family: 'Pacifico', cursive;
+      font-size: 2em;
+      color: #e91e63;
+      text-align: center;
+      transition: 0.5s ease;
+      z-index: 15;
+      text-shadow: 2px 2px 5px rgba(0,0,0,0.2);
+    }
+
+    .popup.show {
+      transform: translate(-50%, -50%) scale(1);
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Do you love me?</h1>
+    <div class="buttons">
+      <button id="yesBtn">Yes 💗</button>
+      <button id="noBtn">No 💔</button>
+    </div>
+  </div>
+
+  <div class="hearts" id="heartsContainer"></div>
+  <div id="popup" class="popup">I love you too 💖</div>
+
+  <script>
+    const noBtn = document.getElementById('noBtn');
+    const yesBtn = document.getElementById('yesBtn');
+    const popup = document.getElementById('popup');
+    const heartsContainer = document.getElementById('heartsContainer');
+    const container = document.querySelector('.container');
+
+    // Move "No" button randomly
+    noBtn.addEventListener('mouseover', () => {
+      const maxX = container.offsetWidth - noBtn.offsetWidth;
+      const maxY = container.offsetHeight - noBtn.offsetHeight;
+      const newX = Math.random() * maxX;
+      const newY = Math.random() * maxY;
+      noBtn.style.left = `${newX}px`;
+      noBtn.style.top = `${newY}px`;
+    });
+
+    // Heart animation on "Yes"
+    yesBtn.addEventListener('click', () => {
+      popup.classList.add('show');
+
+      setInterval(() => {
+        const heart = document.createElement('div');
+        heart.classList.add('heart');
+        heart.innerText = '❤️';
+
+        const startX = Math.random() * window.innerWidth;
+        const startY = window.innerHeight;
+        const endX = (Math.random() - 0.5) * 300 + 'px';
+        const endY = (-window.innerHeight) + 'px'; // go to top
+
+        heart.style.left = `${startX}px`;
+        heart.style.top = `${startY}px`;
+        heart.style.setProperty('--x', endX);
+        heart.style.setProperty('--y', endY);
+
+        heartsContainer.appendChild(heart);
+
+        setTimeout(() => heart.remove(), 2500);
+      }, 150);
+    });
+  </script>
+</body>
+</html>
