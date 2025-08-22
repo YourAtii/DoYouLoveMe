@@ -21,7 +21,7 @@
     .container {
       text-align: center;
       position: absolute;
-      width: 400px;
+      width: 420px;
       max-width: 92vw;
       padding: 30px;
       background: #fff0f5;
@@ -38,14 +38,29 @@
       font-size: 2.2em;
       color: #e91e63;
       text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
-      margin: 0 0 6px;
+      margin: 0 0 12px;
+    }
+
+    /* GIF frame */
+    .gif-wrap {
+      width: 100%;
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.15);
+      margin-bottom: 16px;
+      background: #fff;
+    }
+    #heroGif {
+      display: block;
+      width: 100%;
+      height: auto;
     }
 
     .buttons {
-      margin-top: 20px;
-      position: relative;          /* No button isi box ke andar move hoga */
-      height: 120px;               /* Move space */
-      touch-action: none;          /* Mobile gestures ko roko (scroll/zoom) */
+      margin-top: 14px;
+      position: relative;
+      height: 120px;            /* No button ke move space ke liye */
+      touch-action: none;
       user-select: none;
     }
 
@@ -66,31 +81,23 @@
       color: white;
       margin-right: 20px;
     }
-
-    #yesBtn:hover {
-      transform: scale(1.08);
-    }
+    #yesBtn:hover { transform: scale(1.05); }
 
     #noBtn {
       background-color: #e57373;
       color: white;
-      position: absolute;          /* Move by left/top */
-      left: 0;                     /* Initial position */
-      top: 0;
+      position: absolute;
+      left: 0; top: 0;
       touch-action: none;
     }
 
     .hearts {
       position: fixed;
-      top: 0;
-      left: 0;
-      width: 100vw;
-      height: 100vh;
+      inset: 0;
       pointer-events: none;
       overflow: hidden;
       z-index: 5;
     }
-
     .heart {
       color: #e91e63;
       font-size: 40px;
@@ -98,7 +105,6 @@
       opacity: 0;
       animation: float 2.5s ease-out forwards;
     }
-
     @keyframes float {
       0% { opacity: 1; transform: translate(0, 0) scale(1); }
       100% { opacity: 0; transform: translate(var(--x), var(--y)) scale(1.8); }
@@ -106,13 +112,12 @@
 
     .popup {
       position: fixed;
-      top: 50%;
-      left: 50%;
+      top: 50%; left: 50%;
       transform: translate(-50%, -50%) scale(0);
       background-color: #fff;
       padding: 30px 40px;
       border-radius: 20px;
-      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+      box-shadow: 0 8px 30px rgba(0,0,0,0.3);
       font-family: 'Pacifico', cursive;
       font-size: 2em;
       color: #e91e63;
@@ -121,13 +126,19 @@
       z-index: 15;
       text-shadow: 2px 2px 5px rgba(0,0,0,0.2);
     }
-
     .popup.show { transform: translate(-50%, -50%) scale(1); }
   </style>
 </head>
 <body>
   <div class="container">
     <h1>Do you love me?</h1>
+
+    <!-- GIF area -->
+    <div class="gif-wrap">
+      <!-- Start me yeh lagegi -->
+      <img id="heroGif" src="panah.GIF" alt="Love GIF">
+    </div>
+
     <div class="buttons" id="buttonsBox">
       <button id="yesBtn">Yes 💗</button>
       <button id="noBtn">No 💔</button>
@@ -143,8 +154,9 @@
     const popup = document.getElementById('popup');
     const heartsContainer = document.getElementById('heartsContainer');
     const box = document.getElementById('buttonsBox');
+    const heroGif = document.getElementById('heroGif');
 
-    // --- No button ko random jagah par le jao (desktop + mobile) ---
+    // --- No button random move (desktop + mobile) ---
     function moveNo() {
       const maxX = box.clientWidth - noBtn.offsetWidth;
       const maxY = box.clientHeight - noBtn.offsetHeight;
@@ -154,25 +166,26 @@
       noBtn.style.top  = `${newY}px`;
     }
 
-    // Desktop hover
-    noBtn.addEventListener('mouseover', moveNo);
-
-    // Mobile/Touch: tap par hi bhaag jao (click se pehle)
-    noBtn.addEventListener('pointerdown', (e) => {
-      e.preventDefault();     // click ko cancel kar do
+    noBtn.addEventListener('mouseover', moveNo); // desktop
+    noBtn.addEventListener('pointerdown', (e) => { // mobile tap
+      e.preventDefault();
       e.stopPropagation();
       moveNo();
     }, { passive: false });
-
-    // Extra safety for older iOS: touchstart bhi handle kar lo
-    noBtn.addEventListener('touchstart', (e) => {
+    noBtn.addEventListener('touchstart', (e) => { // extra iOS safety
       e.preventDefault();
       e.stopPropagation();
       moveNo();
     }, { passive: false });
 
-    // --- Yes button: hearts + popup ---
+    // --- Yes button: change GIF + hearts + popup ---
     yesBtn.addEventListener('click', () => {
+      // GIF switch: panah.GIF -> muah.gif
+      heroGif.src = 'muah.gif';
+
+      // Optional: reload GIF if clicked again (forces replay)
+      // heroGif.src = ''; requestAnimationFrame(() => heroGif.src = 'muah.gif');
+
       popup.classList.add('show');
 
       const spawn = setInterval(() => {
@@ -194,14 +207,12 @@
         setTimeout(() => heart.remove(), 2500);
       }, 150);
 
-      // Optional: 6 sec baad hearts band karne hain to uncomment kar do
+      // 6 seconds baad hearts band karne hain to uncomment:
       // setTimeout(() => clearInterval(spawn), 6000);
     });
 
-    // Start: No button ko thoda center ke paas rakh do
-    window.addEventListener('load', () => {
-      moveNo();
-    });
+    // Start position for "No"
+    window.addEventListener('load', moveNo);
   </script>
 </body>
 </html>
